@@ -22,10 +22,10 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 128 })
   avatar: string;
 
-  @Column({ type: 'varchar', length: 128 })
+  @Column({ name: 'fb_id', type: 'varchar', length: 128 })
   fbId: string;
 
-  @Column({ type: 'varchar', length: 128 })
+  @Column({ name: 'fb_link', type: 'varchar', length: 128 })
   fbLink: string;
 
   @Column({ type: 'varchar', length: 128, nullable: false })
@@ -33,6 +33,9 @@ export class UserEntity {
 
   @Column({ type: 'varchar', length: 128, nullable: false, select: false })
   password: string;
+
+  @Column({ type: 'simple-array' })
+  roles: string[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
