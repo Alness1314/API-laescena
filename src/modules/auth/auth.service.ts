@@ -21,7 +21,7 @@ export class AuthService {
   }
 
   login(user: UserEntity) {
-    const { id, ...rest } = user;
+    const { id, avatar, fbId, fbLink, createdAt, status, ...rest } = user;
     const payload = { sub: id };
     delete rest.password;
     return {

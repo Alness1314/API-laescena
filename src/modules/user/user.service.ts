@@ -21,9 +21,14 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async getOneUser(id: number) {
-    const user = await this.userRepository.findOne(id);
-    if (!user) throw new NotFoundException('Usuario no encontado');
+  async getOneUser(id: number, userEntity?: UserEntity) {
+    const user = await this.userRepository
+      .findOne(id)
+      .then((u) =>
+        !userEntity ? u : !!u && userEntity.id === u.id ? u : null,
+      );
+    if (!user)
+      throw new NotFoundException('Usuario no encontado, no autorizado');
     return user;
   }
 
@@ -39,14 +44,14 @@ export class UserService {
     return data;
   }
 
-  async updateUser(id: number, dto: EditUserDTO) {
-    const user = await this.getOneUser(id);
+  async updateUser(id: number, dto: EditUserDTO, userEntity?: UserEntity) {
+    const user = await this.getOneUser(id, userEntity);
     const editUser = Object.assign(user, dto);
     return await this.userRepository.save(editUser);
   }
 
-  async deleteUser(id: number) {
-    const user = await this.getOneUser(id);
+  async deleteUser(id: number, userEntity?: UserEntity) {
+    const user = await this.getOneUser(id, userEntity);
     return await this.userRepository.remove(user);
   }
 

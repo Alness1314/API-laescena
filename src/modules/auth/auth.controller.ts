@@ -1,5 +1,7 @@
 import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ConfigService } from 'src/config/config.service';
+import { setDefaultUser } from 'src/config/defaul-user';
+import { Auth } from '../common/decorators/auth.decorator';
 import { User } from '../common/decorators/user.decorator';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
@@ -8,25 +10,39 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly config: ConfigService,
+  ) {
+    setDefaultUser(config);
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@User() user: UserEntity) {
-    const data = await this.authService.login(user);
+  login(@User() user: UserEntity) {
+    const data = this.authService.login(user);
     return {
       message: 'login exitoso',
       data,
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   @Get('profile')
-  profile() {
-    return 'perfil usuario';
+  profile(@User() user: UserEntity) {
+    return {
+      message: 'perfil de usuario',
+      user,
+    };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   @Get('refresh')
-  refreshToken() {}
+  refreshToken(@User() user: UserEntity) {
+    const data = this.authService.login(user);
+    return {
+      message: 'refresh exitoso',
+      data,
+    };
+  }
 }

@@ -6,7 +6,7 @@ import { ConfigService } from 'src/config/config.service';
 import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
-export class JwtStrategi extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly userService: UserService,
     private readonly configService: ConfigService,
